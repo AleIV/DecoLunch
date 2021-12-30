@@ -25,7 +25,6 @@ import us.jcedeno.libs.rapidinv.RapidInvManager;
 public class Core extends JavaPlugin {
 
     private static @Getter Core instance;
-    private @Getter Game game;
     private @Getter PaperCommandManager commandManager;
     private @Getter static MiniMessage miniMessage = MiniMessage.get();
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -38,9 +37,6 @@ public class Core extends JavaPlugin {
         RapidInvManager.register(this);
         BukkitTCT.registerPlugin(this);
         NegativeSpaces.registerCodes();
-
-        game = new Game(this);
-        game.runTaskTimerAsynchronously(this, 0L, 20L);
 
         this.decoLunchManager = new DecoLunchManager(this);
 
