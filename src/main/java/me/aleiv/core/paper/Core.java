@@ -11,12 +11,13 @@ import co.aikar.commands.PaperCommandManager;
 import kr.entree.spigradle.annotations.SpigotPlugin;
 import lombok.Getter;
 import me.aleiv.core.paper.commands.DecoLunchCMD;
+import me.aleiv.core.paper.listeners.CanceledListener;
 import me.aleiv.core.paper.listeners.DecoItemsListener;
-import me.aleiv.core.paper.listeners.NoteBlockListener;
 import me.aleiv.core.paper.listeners.SpecialDecoItemsListener;
 import me.aleiv.core.paper.objects.DecoItem;
 import me.aleiv.core.paper.utilities.JsonConfig;
 import me.aleiv.core.paper.utilities.NegativeSpaces;
+import me.aleiv.core.paper.utilities.NoteBlockTool.NoteBlockTool;
 import me.aleiv.core.paper.utilities.TCT.BukkitTCT;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import us.jcedeno.libs.rapidinv.RapidInvManager;
@@ -27,8 +28,9 @@ public class Core extends JavaPlugin {
     private static @Getter Core instance;
     private @Getter PaperCommandManager commandManager;
     private @Getter static MiniMessage miniMessage = MiniMessage.get();
-    private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private @Getter Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private @Getter DecoLunchManager decoLunchManager;
+    private @Getter NoteBlockTool noteBlockTool;
 
     @Override
     public void onEnable() {
@@ -38,21 +40,22 @@ public class Core extends JavaPlugin {
         BukkitTCT.registerPlugin(this);
         NegativeSpaces.registerCodes();
 
+        //COMMANDS
+
+        commandManager = new PaperCommandManager(this);
+        commandManager.registerCommand(new DecoLunchCMD(this));
+
+        this.noteBlockTool = new NoteBlockTool(this);
+
         this.decoLunchManager = new DecoLunchManager(this);
 
-        RapidInvManager.register(this);
+        instance.pullJson();
 
         //LISTENERS
 
         Bukkit.getPluginManager().registerEvents(new DecoItemsListener(this), this);
         Bukkit.getPluginManager().registerEvents(new SpecialDecoItemsListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new NoteBlockListener(this), this);
-
-        //COMMANDS
-        
-        commandManager = new PaperCommandManager(this);
-
-        commandManager.registerCommand(new DecoLunchCMD(this));
+        Bukkit.getPluginManager().registerEvents(new CanceledListener(this), this);
 
     }
 
@@ -88,8 +91,8 @@ public class Core extends JavaPlugin {
                 var entry = iter.next();
                 var name = entry.getKey();
                 var value = entry.getValue();
-                var cinematic = gson.fromJson(value, DecoItem.class);
-                map.put(name, cinematic);
+                var obj = gson.fromJson(value, DecoItem.class);
+                map.put(name, obj);
 
             }
 
@@ -97,6 +100,9 @@ public class Core extends JavaPlugin {
 
             e.printStackTrace();
         }
+
     }
+
+    
 
 }

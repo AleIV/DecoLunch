@@ -1,16 +1,15 @@
 package me.aleiv.core.paper;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import lombok.Data;
+import me.aleiv.core.paper.gui.DecoLunchTableGUI;
 import me.aleiv.core.paper.objects.DecoItem;
-import me.aleiv.core.paper.specialDecoItems.DecoLunch;
+import us.jcedeno.libs.rapidinv.RapidInv;
 
 @Data
 public class DecoLunchManager {
@@ -18,40 +17,42 @@ public class DecoLunchManager {
     Core instance;
 
     HashMap<String, DecoItem> decoitems = new HashMap<>();
+    HashMap<String, RapidInv> guiCodes = new HashMap<>();
 
     public DecoLunchManager(Core instance){
         this.instance = instance;
 
-        instance.pullJson();
         initSpecialDecoItems();
 
-        initAnnotations();
+    }
 
+    public boolean isDecoItem(ItemStack item){
+        var meta = item.getItemMeta();
+        if(meta.hasDisplayName()){
+            var name = meta.getDisplayName();
+            return !decoitems.values().stream().filter(deco -> name.contains(deco.getName())).toList().isEmpty();
+        }
+        return false;
+    }
+
+    public DecoItem getDecoItem(ItemStack item){
+        var meta = item.getItemMeta();
+        if(isDecoItem(item)){
+            var name = meta.getDisplayName();
+            return decoitems.values().stream().filter(deco -> name.contains(deco.getName())).findAny().orElse(null);
+        }
+        return null;
     }
 
     private void initSpecialDecoItems(){
-        decoitems.put("DecoLunch", new DecoLunch("DecoLunch", 0, 0, Material.AZURE_BLUET, Catalog.ADMIN, Rarity.COMMON, List.of(DecoTag.GUI)));
+        var tool = instance.getNoteBlockTool();
+
+        var blockID = tool.getBlockIDbyData("harp", 0, false);
+        decoitems.put("DecoLunch", new DecoItem("DecoLunch", 0, blockID, Material.NOTE_BLOCK, Catalog.ADMIN, Rarity.COMMON, List.of()));
+        guiCodes.put(blockID, new DecoLunchTableGUI());
+
     }
 
-    private void initAnnotations(){
-        var manager = instance.getCommandManager();
-
-        manager.getCommandCompletions().registerAsyncCompletion("bool", c -> {
-            return ImmutableList.of("true", "false");
-        });
-
-        manager.getCommandCompletions().registerAsyncCompletion("catalog", c -> {
-            return Arrays.stream(Catalog.values()).map(val -> val.toString()).toList();
-        });
-
-        manager.getCommandCompletions().registerAsyncCompletion("decotag", c -> {
-            return Arrays.stream(DecoTag.values()).map(val -> val.toString()).toList();
-        });
-
-        manager.getCommandCompletions().registerAsyncCompletion("rarity", c -> {
-            return Arrays.stream(Rarity.values()).map(val -> val.toString()).toList();
-        });
-    }
     //18-53
 
     public enum Catalog{
@@ -59,11 +60,7 @@ public class DecoLunchManager {
     }
 
     public enum DecoTag{
-        SIT, GUI, GRAVITY, PUT
-    }
-
-    public enum DecoGUI{
-        DECOLUNCH, NONE
+        SIT
     }
 
     public enum Rarity{
