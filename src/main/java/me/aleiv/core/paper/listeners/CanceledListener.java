@@ -1,7 +1,5 @@
 package me.aleiv.core.paper.listeners;
 
-import java.util.Arrays;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
@@ -22,18 +20,26 @@ public class CanceledListener implements Listener{
         var inv = e.getInventory();
         var item = inv.getItem(0);
         var manager = instance.getDecoLunchManager();
+        var result = e.getResult();
         if(item != null && manager.isDecoItem(item)){
             e.setResult(null);
+
+        }else if(result != null && manager.isDecoItem(result)){
+            e.setResult(null);
+
         }
     }
 
-    //@EventHandler
+    @EventHandler
     public void onCraftCustomModel(PrepareItemCraftEvent e){
         var table = e.getInventory().getContents();
         var manager = instance.getDecoLunchManager();
-        var contains = !Arrays.stream(table).filter(item -> item != null && manager.isDecoItem(item)).toList().isEmpty();
-        if(contains){
-            e.getInventory().setResult(null);
+
+        for (var item : table) {
+            if(item != null && item.hasItemMeta() && manager.isDecoItem(item)){
+                e.getInventory().setResult(null);
+                return;
+            }
         }
 
     }

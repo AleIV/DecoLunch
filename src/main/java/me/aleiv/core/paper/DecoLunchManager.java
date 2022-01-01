@@ -26,6 +26,18 @@ public class DecoLunchManager {
 
     }
 
+    public boolean hasDecoItem(String blockID){
+        return !decoitems.values().stream().filter(decoItem -> decoItem.getBlockID() == blockID).toList().isEmpty();
+    }
+
+    public DecoItem getDecoItem(String name){
+        return decoitems.containsKey(name) ? decoitems.get(name) : null;
+    }
+
+    public List<DecoItem> getDecoItems(String blockID){
+        return decoitems.values().stream().filter(decoItem -> decoItem.getBlockID() == blockID).toList();
+    }
+
     public boolean isDecoItem(ItemStack item){
         var meta = item.getItemMeta();
         if(meta.hasDisplayName()){
@@ -45,11 +57,18 @@ public class DecoLunchManager {
     }
 
     private void initSpecialDecoItems(){
-        var tool = instance.getNoteBlockTool();
 
-        var blockID = tool.getBlockIDbyData("harp", 0, false);
-        decoitems.put("DecoLunch", new DecoItem("DecoLunch", 0, blockID, Material.NOTE_BLOCK, Catalog.ADMIN, Rarity.COMMON, List.of()));
-        guiCodes.put(blockID, new DecoLunchTableGUI());
+        try {
+            var tool = instance.getNoteBlockTool();
+
+            var blockID = tool.getBlockIDbyData("harp", 1, false);
+            decoitems.put("DecoLunch", new DecoItem("DecoLunch", 0, blockID, Material.NOTE_BLOCK, Catalog.ADMIN, Rarity.COMMON, List.of()));
+            guiCodes.put(blockID, new DecoLunchTableGUI());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Couldn't register special Deco Items, Json data is not present.");
+        }
 
     }
 

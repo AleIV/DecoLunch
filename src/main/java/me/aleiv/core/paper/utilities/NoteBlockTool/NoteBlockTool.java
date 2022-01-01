@@ -43,6 +43,29 @@ public class NoteBlockTool implements Listener {
         }
     }
 
+    @EventHandler
+    public void onClick(PlayerInteractEvent e) {
+        var block = e.getClickedBlock();
+
+        if (block != null && block.getType() == Material.NOTE_BLOCK) {
+            e.setCancelled(true);
+            var tool = instance.getNoteBlockTool();
+
+            if(tool.isDefaultNoteBlock(block)){
+                //TODO: vanilla noteblock
+            }
+
+        }
+
+    }
+
+    public boolean isDefaultNoteBlock(Block block){
+        var noteBlock = getNoteBlockData(block);
+        var thisID = getBlockID(noteBlock);
+        var defaultID = getBlockIDbyData("harp", 0, false);
+        return thisID == defaultID; 
+    }
+
     public NoteBlock getNoteBlockData(Block block){
         return (NoteBlock) block.getBlockData();
     }
@@ -51,15 +74,8 @@ public class NoteBlockTool implements Listener {
         return noteblocks.containsKey(blockID) ? noteblocks.get(blockID) : null;
     }
 
-    public NoteBlock getNoteBlock(String blockID){
-        var noteBlockID = getNoteBlockID(blockID);
-        return getNoteBlockData(noteBlockID.getInstrumentF3(), noteBlockID.getNoteF3(), noteBlockID.isPowered());
-    }
-
-    public NoteBlock getNoteBlockData(String instrument, int note, boolean powered) {
-        var noteblockID = noteblocks.values().stream()
-                .filter(noteblock -> noteblock.getInstrumentF3().equals(instrument) && noteblock.getNoteF3() == note)
-                .findAny().orElse(null);
+    public NoteBlock getNoteBlockData(String blockID) {
+        var noteblockID = getNoteBlockID(blockID);
 
         if (noteblockID == null)
             return null;
@@ -95,9 +111,10 @@ public class NoteBlockTool implements Listener {
         var note = noteBlock.getNote();
         var tone = note.getTone();
         var octave = note.getOctave();
+        var sharped = note.isSharped();
         var powered = noteBlock.isPowered();
 
-        return new NoteBlockID(instrumentF3, Integer.parseInt(noteF3), instrument, tone, octave, powered);
+        return new NoteBlockID(instrumentF3, Integer.parseInt(noteF3), powered, instrument, tone, octave, sharped);
         
     }
 
@@ -107,17 +124,18 @@ public class NoteBlockTool implements Listener {
         var format = new StringBuilder();
         format.append(nt.getInstrumentF3() + ";");
         format.append(nt.getNoteF3() + ";");
+        format.append(nt.isPowered() + ";");
         format.append(nt.getInstrument().toString() + ";");
         format.append(nt.getTone().toString() + ";");
         format.append(nt.getOctave() + ";");
-        format.append(nt.isPowered() + ";");
+        format.append(nt.isSharped() + ";");
 
         return format.toString();
         
     }
 
     public String getBlockIDbyData(String instrument, int note, boolean powered){
-        return getBlockID(getNoteBlockData(instrument, note, powered));
+        return noteblocks.keySet().stream().filter(noteblock -> noteblock.startsWith(instrument + ";" + note + ";" + powered)).findAny().orElse("");
     }
 
     //@EventHandler
@@ -137,8 +155,8 @@ public class NoteBlockTool implements Listener {
                 noteblocks.put(blockID, noteBlockID);
                 player.sendMessage(ChatColor.YELLOW + "(" + noteblocks.size() + ") Added " + noteBlockID.getInstrumentF3() + " " + noteBlockID.getNoteF3() + " " + noteBlock.isPowered());
                 pushJson();
-            }
 
+            }
         }
     }
 

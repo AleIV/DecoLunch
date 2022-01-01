@@ -19,6 +19,7 @@ import me.aleiv.core.paper.utilities.JsonConfig;
 import me.aleiv.core.paper.utilities.NegativeSpaces;
 import me.aleiv.core.paper.utilities.NoteBlockTool.NoteBlockTool;
 import me.aleiv.core.paper.utilities.TCT.BukkitTCT;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import us.jcedeno.libs.rapidinv.RapidInvManager;
 
@@ -62,6 +63,10 @@ public class Core extends JavaPlugin {
     @Override
     public void onDisable() {
 
+    }
+
+    public Component parse(String str){
+        return MiniMessage.get().parse(str);
     }
 
     public void pushJson(){

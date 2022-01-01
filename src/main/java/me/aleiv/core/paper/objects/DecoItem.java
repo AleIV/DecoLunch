@@ -11,7 +11,7 @@ import lombok.Data;
 import me.aleiv.core.paper.DecoLunchManager.Catalog;
 import me.aleiv.core.paper.DecoLunchManager.DecoTag;
 import me.aleiv.core.paper.DecoLunchManager.Rarity;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.md_5.bungee.api.ChatColor;
 import us.jcedeno.libs.rapidinv.ItemBuilder;
 
 @Data
@@ -19,11 +19,11 @@ public class DecoItem {
 
     public static HashMap<Rarity, String> colorItem = new HashMap<Rarity, String>() {
         {
-            put(Rarity.COMMON, MiniMessage.get().parse("<#6d777e>") + "");
-            put(Rarity.UNCOMMON, MiniMessage.get().parse("<#81bc2f>") + "");
-            put(Rarity.RARE, MiniMessage.get().parse("<#2fbc9d>") + "");
-            put(Rarity.EPIC, MiniMessage.get().parse("<#bc2f3b>") + "");
-            put(Rarity.LEGENDARY, MiniMessage.get().parse("<#eba400>") + "");
+            put(Rarity.COMMON, "#6d777e");
+            put(Rarity.UNCOMMON, "#81bc2f");
+            put(Rarity.RARE, "#2fbc9d");
+            put(Rarity.EPIC, "#bc2f3b");
+            put(Rarity.LEGENDARY, "#eba400");
         }
     };
 
@@ -50,7 +50,7 @@ public class DecoItem {
 
     public ItemStack getItemStack() {
         return new ItemBuilder(material).meta(meta -> meta.setCustomModelData(customModelData))
-                .name(colorItem.get(rarity) + name).build();
+                .name(ChatColor.of(colorItem.get(rarity)) + name).build();
     }
 
 }

@@ -19,15 +19,15 @@ import me.aleiv.core.paper.DecoLunchManager.Catalog;
 import me.aleiv.core.paper.DecoLunchManager.DecoTag;
 import me.aleiv.core.paper.DecoLunchManager.Rarity;
 import me.aleiv.core.paper.objects.DecoItem;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.md_5.bungee.api.ChatColor;
 
 @CommandAlias("decolunch")
 @CommandPermission("admin.perm")
 public class DecoLunchCMD extends BaseCommand {
 
     private @NonNull Core instance;
-    String errorColor = MiniMessage.get().parse("<#b2383a>") + "";
-    String cmdColor = MiniMessage.get().parse("<#38b290>") + "";
+    String errorColor = "#b2383a";
+    String cmdColor = "#38b290";
 
     public DecoLunchCMD(Core instance) {
         this.instance = instance;
@@ -36,27 +36,28 @@ public class DecoLunchCMD extends BaseCommand {
     }
 
     @Subcommand("register")
-    public void register(CommandSender sender, String name, int customModelData, Material material, Catalog catalog, Rarity rarity, DecoTag decoTag) {
+    public void register(CommandSender sender, String name, int customModelData, Material material, Catalog catalog,
+            Rarity rarity, DecoTag decoTag) {
 
         var manager = instance.getDecoLunchManager();
         var decoitems = manager.getDecoitems();
 
-        if(decoitems.containsKey(name)){
-            sender.sendMessage(errorColor + "DecoItem " + name + " is already registered.");
+        if (decoitems.containsKey(name)) {
+            sender.sendMessage(ChatColor.of(errorColor) + "DecoItem " + name + " is already registered.");
 
-        }else{
+        } else {
             var decoitem = new DecoItem(name, customModelData, "", material, catalog, rarity, List.of(decoTag));
 
             var player = (Player) sender;
             player.getInventory().addItem(decoitem.getItemStack());
-            
+
             decoitems.put(name, decoitem);
             instance.pushJson();
 
-            sender.sendMessage(cmdColor + "DecoItem " + name + " registered.");
+            sender.sendMessage(ChatColor.of(cmdColor) + "DecoItem " + name + " registered.");
 
         }
-        
+
     }
 
     @Subcommand("get")
@@ -65,23 +66,22 @@ public class DecoLunchCMD extends BaseCommand {
         var manager = instance.getDecoLunchManager();
         var decoitems = manager.getDecoitems();
 
-        if(!decoitems.containsKey(name)){
-            sender.sendMessage(errorColor + "DecoItem " + name + " is not registered.");
+        if (!decoitems.containsKey(name)) {
+            sender.sendMessage(ChatColor.of(errorColor) + "DecoItem " + name + " is not registered.");
 
-        }else{
+        } else {
             var decoitem = decoitems.get(name);
 
             var player = (Player) sender;
             player.getInventory().addItem(decoitem.getItemStack());
 
-            sender.sendMessage(cmdColor + "DecoItem " + name + " given.");
+            sender.sendMessage(ChatColor.of(cmdColor) + "DecoItem " + name + " given.");
 
         }
-        
-        
+
     }
 
-    private void initAnnotations(){
+    private void initAnnotations() {
         var manager = instance.getCommandManager();
 
         manager.getCommandCompletions().registerAsyncCompletion("bool", c -> {
