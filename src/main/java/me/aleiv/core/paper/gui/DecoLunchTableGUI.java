@@ -1,16 +1,15 @@
 package me.aleiv.core.paper.gui;
 
-import us.jcedeno.libs.rapidinv.RapidInv;
+import org.bukkit.Location;
 
-public class DecoLunchTableGUI extends RapidInv{
+public class DecoLunchTableGUI extends DecoGUIBase{
 
-    public DecoLunchTableGUI() {
-        super(9*6, "DecoLunch Table");
-
+    public DecoLunchTableGUI(Location location) {
+        super(9*6, "DecoLunch Table", location);
     }
 
     public void updateLeftArrow(){
-
+        
     }
 
     public void updateRightArrow(){

@@ -3,6 +3,7 @@ package me.aleiv.core.paper;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,7 +18,7 @@ public class DecoLunchManager {
     Core instance;
 
     HashMap<String, DecoItem> decoitems = new HashMap<>();
-    HashMap<String, RapidInv> guiCodes = new HashMap<>();
+    HashMap<String, GuiCode> guiCodes = new HashMap<>();
 
     public DecoLunchManager(Core instance){
         this.instance = instance;
@@ -63,13 +64,22 @@ public class DecoLunchManager {
 
             var blockID = tool.getBlockIDbyData("harp", 1, false);
             decoitems.put("DecoLunch", new DecoItem("DecoLunch", 0, blockID, Material.NOTE_BLOCK, Catalog.ADMIN, Rarity.COMMON, List.of()));
-            guiCodes.put(blockID, new DecoLunchTableGUI());
+            guiCodes.put(blockID, GuiCode.DECOLUNCH);
 
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Couldn't register special Deco Items, Json data is not present.");
         }
 
+    }
+
+    public RapidInv getGui(GuiCode guiCode, Location location){
+        switch (guiCode) {
+            case DECOLUNCH ->{
+                return new DecoLunchTableGUI(location);
+            }
+        }
+        return null;
     }
 
     //18-53
@@ -79,11 +89,15 @@ public class DecoLunchManager {
     }
 
     public enum DecoTag{
-        SIT
+        SIT, ENTITY, BLOCK, BARRIER, CRAFT, OFF_HAND, MAIN_HAND, HEAD
     }
 
     public enum Rarity{
         COMMON, UNCOMMON, RARE, EPIC, LEGENDARY
+    }
+
+    public enum GuiCode{
+        DECOLUNCH
     }
 
 

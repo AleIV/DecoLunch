@@ -13,6 +13,7 @@ import lombok.Getter;
 import me.aleiv.core.paper.commands.DecoLunchCMD;
 import me.aleiv.core.paper.listeners.CanceledListener;
 import me.aleiv.core.paper.listeners.DecoItemsListener;
+import me.aleiv.core.paper.listeners.GlobalListener;
 import me.aleiv.core.paper.listeners.SpecialDecoItemsListener;
 import me.aleiv.core.paper.objects.DecoItem;
 import me.aleiv.core.paper.utilities.JsonConfig;
@@ -57,6 +58,7 @@ public class Core extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new DecoItemsListener(this), this);
         Bukkit.getPluginManager().registerEvents(new SpecialDecoItemsListener(this), this);
         Bukkit.getPluginManager().registerEvents(new CanceledListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new GlobalListener(this), this);
 
     }
 

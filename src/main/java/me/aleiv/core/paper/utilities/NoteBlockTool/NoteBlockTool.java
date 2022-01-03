@@ -8,10 +8,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.NotePlayEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import lombok.Data;
@@ -44,10 +48,24 @@ public class NoteBlockTool implements Listener {
     }
 
     @EventHandler
+    public void onBlock(BlockPlaceEvent e){
+        var block = e.getBlock();
+        var up = block.getRelative(BlockFace.UP);
+        if(up != null && up.getType() == Material.NOTE_BLOCK){
+            var noteBlock = getNoteBlockData(block);
+            Bukkit.getScheduler().runTaskLater(instance, task ->{
+                setBlockData(block, noteBlock);
+            }, 1);
+        }
+    }
+
+    @EventHandler
     public void onClick(PlayerInteractEvent e) {
         var block = e.getClickedBlock();
+        var player = e.getPlayer();
+        var action = e.getAction();
 
-        if (block != null && block.getType() == Material.NOTE_BLOCK) {
+        if (action == Action.RIGHT_CLICK_BLOCK && block != null && block.getType() == Material.NOTE_BLOCK && !player.isSneaking()) {
             e.setCancelled(true);
             var tool = instance.getNoteBlockTool();
 
@@ -59,11 +77,20 @@ public class NoteBlockTool implements Listener {
 
     }
 
+    @EventHandler
+    public void onNote(NotePlayEvent e){
+        e.setCancelled(true);
+    }
+
     public boolean isDefaultNoteBlock(Block block){
         var noteBlock = getNoteBlockData(block);
         var thisID = getBlockID(noteBlock);
         var defaultID = getBlockIDbyData("harp", 0, false);
         return thisID == defaultID; 
+    }
+    
+    public void setBlockData(Block block, NoteBlock noteBlock){
+        block.setBlockData(noteBlock);
     }
 
     public NoteBlock getNoteBlockData(Block block){

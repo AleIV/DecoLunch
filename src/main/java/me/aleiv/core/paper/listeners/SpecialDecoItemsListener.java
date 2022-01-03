@@ -34,7 +34,10 @@ public class SpecialDecoItemsListener implements Listener{
 
             if(guiCodes.containsKey(blockID)){
 
-                var gui = guiCodes.get(blockID);
+                var manager = instance.getDecoLunchManager();
+                var guiCode = guiCodes.get(blockID);
+                var location = block.getRelative(e.getBlockFace()).getLocation();
+                var gui = manager.getGui(guiCode, location);
                 var player = e.getPlayer();
                 gui.open(player);
 
