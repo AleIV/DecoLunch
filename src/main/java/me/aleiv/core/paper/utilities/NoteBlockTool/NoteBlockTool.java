@@ -2,19 +2,21 @@ package me.aleiv.core.paper.utilities.NoteBlockTool;
 
 import java.util.HashMap;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
 import com.google.gson.JsonObject;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.NotePlayEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -38,24 +40,14 @@ public class NoteBlockTool implements Listener {
         instance.getCommandManager().registerCommand(noteBlockCMD);
 
         pullJson();
+
+        registerPacketNoteBlock();
     }
 
     @EventHandler
-    public void onNoteBlockChange(BlockPhysicsEvent e){
-        if(e.getBlock().getType() == Material.NOTE_BLOCK){
+    public void onNoteBlockChange(BlockPhysicsEvent e) {
+        if (e.getBlock().getType() == Material.NOTE_BLOCK) {
             e.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onBlock(BlockPlaceEvent e){
-        var block = e.getBlock();
-        var up = block.getRelative(BlockFace.UP);
-        if(up != null && up.getType() == Material.NOTE_BLOCK){
-            var noteBlock = getNoteBlockData(block);
-            Bukkit.getScheduler().runTaskLater(instance, task ->{
-                setBlockData(block, noteBlock);
-            }, 1);
         }
     }
 
@@ -65,39 +57,40 @@ public class NoteBlockTool implements Listener {
         var player = e.getPlayer();
         var action = e.getAction();
 
-        if (action == Action.RIGHT_CLICK_BLOCK && block != null && block.getType() == Material.NOTE_BLOCK && !player.isSneaking()) {
+        if (action == Action.RIGHT_CLICK_BLOCK && block != null && block.getType() == Material.NOTE_BLOCK
+                && !player.isSneaking()) {
             e.setCancelled(true);
             var tool = instance.getNoteBlockTool();
 
-            if(tool.isDefaultNoteBlock(block)){
-                //TODO: vanilla noteblock
+            if (tool.isDefaultNoteBlock(block)) {
+                //vanilla noteblock
             }
 
         }
 
     }
-
+    
     @EventHandler
-    public void onNote(NotePlayEvent e){
+    public void onNote(NotePlayEvent e) {
         e.setCancelled(true);
     }
 
-    public boolean isDefaultNoteBlock(Block block){
+    public boolean isDefaultNoteBlock(Block block) {
         var noteBlock = getNoteBlockData(block);
         var thisID = getBlockID(noteBlock);
         var defaultID = getBlockIDbyData("harp", 0, false);
-        return thisID == defaultID; 
+        return thisID == defaultID;
     }
-    
-    public void setBlockData(Block block, NoteBlock noteBlock){
+
+    public void setBlockData(Block block, NoteBlock noteBlock) {
         block.setBlockData(noteBlock);
     }
 
-    public NoteBlock getNoteBlockData(Block block){
+    public NoteBlock getNoteBlockData(Block block) {
         return (NoteBlock) block.getBlockData();
     }
 
-    public NoteBlockID getNoteBlockID(String blockID){
+    public NoteBlockID getNoteBlockID(String blockID) {
         return noteblocks.containsKey(blockID) ? noteblocks.get(blockID) : null;
     }
 
@@ -123,7 +116,7 @@ public class NoteBlockTool implements Listener {
 
     }
 
-    public NoteBlockID getNoteBlockID(NoteBlock noteBlock){
+    public NoteBlockID getNoteBlockID(NoteBlock noteBlock) {
         var nt = noteBlock.getAsString();
 
         var val1 = nt.replace("minecraft:note_block[", "");
@@ -142,10 +135,10 @@ public class NoteBlockTool implements Listener {
         var powered = noteBlock.isPowered();
 
         return new NoteBlockID(instrumentF3, Integer.parseInt(noteF3), powered, instrument, tone, octave, sharped);
-        
+
     }
 
-    public String getBlockID(NoteBlock noteBlock){
+    public String getBlockID(NoteBlock noteBlock) {
         var nt = getNoteBlockID(noteBlock);
 
         var format = new StringBuilder();
@@ -158,14 +151,16 @@ public class NoteBlockTool implements Listener {
         format.append(nt.isSharped() + ";");
 
         return format.toString();
-        
+
     }
 
-    public String getBlockIDbyData(String instrument, int note, boolean powered){
-        return noteblocks.keySet().stream().filter(noteblock -> noteblock.startsWith(instrument + ";" + note + ";" + powered)).findAny().orElse("");
+    public String getBlockIDbyData(String instrument, int note, boolean powered) {
+        return noteblocks.keySet().stream()
+                .filter(noteblock -> noteblock.startsWith(instrument + ";" + note + ";" + powered)).findAny()
+                .orElse("");
     }
 
-    //@EventHandler
+    // @EventHandler
     public void addNoteBlocks(PlayerInteractEvent e) {
         var block = e.getClickedBlock();
         var player = e.getPlayer();
@@ -180,7 +175,8 @@ public class NoteBlockTool implements Listener {
 
             if (!noteblocks.containsKey(blockID)) {
                 noteblocks.put(blockID, noteBlockID);
-                player.sendMessage(ChatColor.YELLOW + "(" + noteblocks.size() + ") Added " + noteBlockID.getInstrumentF3() + " " + noteBlockID.getNoteF3() + " " + noteBlock.isPowered());
+                player.sendMessage(ChatColor.YELLOW + "(" + noteblocks.size() + ") Added "
+                        + noteBlockID.getInstrumentF3() + " " + noteBlockID.getNoteF3() + " " + noteBlock.isPowered());
                 pushJson();
 
             }
@@ -225,4 +221,22 @@ public class NoteBlockTool implements Listener {
         }
 
     }
+
+    private void registerPacketNoteBlock() {
+        var manager = instance.getProtocolManager();
+        manager.addPacketListener(new PacketAdapter(instance,
+                PacketType.Play.Server.BLOCK_CHANGE) {
+
+            @Override
+            public void onPacketSending(PacketEvent e) {
+                PacketContainer packet = e.getPacket();
+                var material = packet.getBlockData().getValues().get(0).getType();
+                if(material == Material.NOTE_BLOCK){
+                    e.setCancelled(true);
+                }
+
+            }
+        });
+    }
+
 }

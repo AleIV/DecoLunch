@@ -1,5 +1,7 @@
 package me.aleiv.core.paper;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -33,11 +35,13 @@ public class Core extends JavaPlugin {
     private @Getter Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private @Getter DecoLunchManager decoLunchManager;
     private @Getter NoteBlockTool noteBlockTool;
+    private @Getter ProtocolManager protocolManager;
 
     @Override
     public void onEnable() {
         instance = this;
 
+        protocolManager = ProtocolLibrary.getProtocolManager();
         RapidInvManager.register(this);
         BukkitTCT.registerPlugin(this);
         NegativeSpaces.registerCodes();
