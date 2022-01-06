@@ -296,40 +296,40 @@ public class DecoLunchManager {
         put("Acacia Console Table", 17, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
         put("Dark Oak Console Table", 18, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));*/
 
-        put("Oak Table", 19, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SMOOTH_YAW));
-        put("Spruce Table", 20, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SMOOTH_YAW));
-        put("Birch Table", 21, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SMOOTH_YAW));
-        put("Jungle Table", 22, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SMOOTH_YAW));
-        put("Acacia Table", 23, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SMOOTH_YAW));
-        put("Dark Oak Table", 24, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SMOOTH_YAW));
+        put("Oak Table", 19, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW));
+        put("Spruce Table", 20, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW));
+        put("Birch Table", 21, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW));
+        put("Jungle Table", 22, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW));
+        put("Acacia Table", 23, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW));
+        put("Dark Oak Table", 24, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW));
 
-        put("Oak Mini Table", 25, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Spruce Mini Table", 26, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Birch Mini Table", 27, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Jungle Mini Table", 28, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Acacia Mini Table", 29, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Dark Oak Mini Table", 30, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
+        put("Oak Mini Table", 25, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
+        put("Spruce Mini Table", 26, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
+        put("Birch Mini Table", 27, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
+        put("Jungle Mini Table", 28, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
+        put("Acacia Mini Table", 29, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
+        put("Dark Oak Mini Table", 30, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
 
-        put("Oak Dresser", 31, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Spruce Dresser", 32, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Birch Dresser", 33, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Jungle Dresser", 34, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Acacia Dresser", 35, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Dark Oak Dresser", 36, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
+        put("Oak Dresser", 31, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
+        put("Spruce Dresser", 32, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
+        put("Birch Dresser", 33, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
+        put("Jungle Dresser", 34, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
+        put("Acacia Dresser", 35, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
+        put("Dark Oak Dresser", 36, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
 
-        put("Oak Armchair", 31, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Spruce Armchair", 32, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Birch Armchair", 33, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Jungle Armchair", 34, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Acacia Armchair", 35, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Dark Oak Armchair", 36, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
+        put("Oak Armchair", 37, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
+        put("Spruce Armchair", 38, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
+        put("Birch Armchair", 39, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
+        put("Jungle Armchair", 40, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
+        put("Acacia Armchair", 41, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
+        put("Dark Oak Armchair", 42, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
 
-        put("Oak Chandelier", 37, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
-        put("Spruce Chandelier", 38, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
-        put("Birch Chandelier", 39, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
-        put("Jungle Chandelier", 40, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
-        put("Acacia Chandelier", 41, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
-        put("Dark Oak Chandelier", 42, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
+        put("Oak Chandelier", 43, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
+        put("Spruce Chandelier", 44, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
+        put("Birch Chandelier", 45, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
+        put("Jungle Chandelier", 46, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
+        put("Acacia Chandelier", 47, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
+        put("Dark Oak Chandelier", 48, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
 
         //DECORATION
 
