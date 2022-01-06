@@ -18,8 +18,6 @@ public class SpecialDecoItemsListener implements Listener{
         this.instance = instance;
     }
 
-    //TODO: hammers
-
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
         var block = e.getClickedBlock();
@@ -32,16 +30,15 @@ public class SpecialDecoItemsListener implements Listener{
             var guiCodes = instance.getDecoLunchManager().getGuiCodes();
             var blockID = tool.getBlockID(noteBlock);
 
-            if(guiCodes.containsKey(blockID)){
+            var player = e.getPlayer();
+            if(guiCodes.containsKey(blockID) && !player.isSneaking()){
 
                 var manager = instance.getDecoLunchManager();
                 var guiCode = guiCodes.get(blockID);
                 var location = block.getRelative(e.getBlockFace()).getLocation();
                 var gui = manager.getGui(guiCode, location);
-                var player = e.getPlayer();
                 gui.open(player);
 
-                //TODO: SOUNDS ON OPEN GUI SWITCH
             }
 
         }
@@ -54,13 +51,17 @@ public class SpecialDecoItemsListener implements Listener{
         var item = e.getItemInHand();
         var manager = instance.getDecoLunchManager();
         
-        if(block.getType() == Material.NOTE_BLOCK && item != null && manager.isDecoItem(item)){
+        if(block.getType() == Material.NOTE_BLOCK && item != null){
             var tool = instance.getNoteBlockTool();
-            var decoItem = manager.getDecoItem(item);
-            var noteBlock = tool.getNoteBlockData(decoItem.getBlockID());
-            
-            if(noteBlock != null){
-                block.setBlockData(noteBlock);
+
+            if(manager.isDecoItem(item)){
+                var decoItem = manager.getDecoItem(item);
+                var noteBlock = tool.getNoteBlockData(decoItem.getBlockID());
+                if(noteBlock != null){
+                    block.setBlockData(noteBlock);
+                }
+            }else{
+                block.setBlockData(tool.getDefaultBlockData());
             }
 
         }
@@ -72,19 +73,18 @@ public class SpecialDecoItemsListener implements Listener{
         var manager = instance.getDecoLunchManager();
         var tool = instance.getNoteBlockTool();
         
-        if(block.getType() == Material.NOTE_BLOCK && !tool.isDefaultNoteBlock(block)){
+        if(block.getType() == Material.NOTE_BLOCK){
+            if(tool.isDefaultNoteBlock(block)) return;
             e.setDropItems(false);
             
             var noteBlock = tool.getNoteBlockData(block);
             var blockID = tool.getBlockID(noteBlock);
-            var decoitems = manager.getDecoItems(blockID);
+            var decoItem = manager.getDecoItemByBlockID(blockID);
             
-            if(!decoitems.isEmpty()){
+            if(decoItem != null){
                 var loc = block.getLocation();
-                var decoItem = decoitems.get(0);
                 block.getWorld().dropItemNaturally(loc, decoItem.getItemStack());
             }
-            
 
         }
     }

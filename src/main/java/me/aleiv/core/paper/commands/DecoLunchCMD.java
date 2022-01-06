@@ -1,9 +1,6 @@
 package me.aleiv.core.paper.commands;
 
-import java.util.Arrays;
 import java.util.List;
-
-import com.google.common.collect.ImmutableList;
 
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -11,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Subcommand;
 import lombok.NonNull;
@@ -32,7 +30,6 @@ public class DecoLunchCMD extends BaseCommand {
     public DecoLunchCMD(Core instance) {
         this.instance = instance;
 
-        initAnnotations();
     }
 
     @Subcommand("register")
@@ -40,7 +37,7 @@ public class DecoLunchCMD extends BaseCommand {
             Rarity rarity, DecoTag decoTag) {
 
         var manager = instance.getDecoLunchManager();
-        var decoitems = manager.getDecoitems();
+        var decoitems = manager.getDecoItems();
 
         if (decoitems.containsKey(name)) {
             sender.sendMessage(ChatColor.of(errorColor) + "DecoItem " + name + " is already registered.");
@@ -61,10 +58,11 @@ public class DecoLunchCMD extends BaseCommand {
     }
 
     @Subcommand("get")
+    @CommandCompletion("@decoitems")
     public void get(CommandSender sender, String name) {
 
         var manager = instance.getDecoLunchManager();
-        var decoitems = manager.getDecoitems();
+        var decoitems = manager.getDecoItems();
 
         if (!decoitems.containsKey(name)) {
             sender.sendMessage(ChatColor.of(errorColor) + "DecoItem " + name + " is not registered.");
@@ -79,26 +77,6 @@ public class DecoLunchCMD extends BaseCommand {
 
         }
 
-    }
-
-    private void initAnnotations() {
-        var manager = instance.getCommandManager();
-
-        manager.getCommandCompletions().registerAsyncCompletion("bool", c -> {
-            return ImmutableList.of("true", "false");
-        });
-
-        manager.getCommandCompletions().registerAsyncCompletion("catalog", c -> {
-            return Arrays.stream(Catalog.values()).map(val -> val.toString()).toList();
-        });
-
-        manager.getCommandCompletions().registerAsyncCompletion("decotag", c -> {
-            return Arrays.stream(DecoTag.values()).map(val -> val.toString()).toList();
-        });
-
-        manager.getCommandCompletions().registerAsyncCompletion("rarity", c -> {
-            return Arrays.stream(Rarity.values()).map(val -> val.toString()).toList();
-        });
     }
 
 }

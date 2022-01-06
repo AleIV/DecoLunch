@@ -76,7 +76,7 @@ public class Core extends JavaPlugin {
     }
 
     public void pushJson(){
-        var list = decoLunchManager.getDecoitems();
+        var list = decoLunchManager.getDecoItems();
 
         try {
             var jsonConfig = new JsonConfig("decoitems.json");
@@ -96,7 +96,7 @@ public class Core extends JavaPlugin {
             var jsonConfig = new JsonConfig("decoitems.json");
             var list = jsonConfig.getJsonObject();
             var iter = list.entrySet().iterator();
-            var map = decoLunchManager.getDecoitems();
+            var map = decoLunchManager.getDecoItems();
 
             while (iter.hasNext()) {
                 var entry = iter.next();
