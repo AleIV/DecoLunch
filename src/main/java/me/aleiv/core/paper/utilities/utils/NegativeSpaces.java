@@ -1,4 +1,4 @@
-package me.aleiv.core.paper.utilities;
+package me.aleiv.core.paper.utilities.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

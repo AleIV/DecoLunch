@@ -1,4 +1,4 @@
-package me.aleiv.core.paper.utilities;
+package me.aleiv.core.paper.utilities.utils;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;

@@ -21,7 +21,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import lombok.Data;
 import me.aleiv.core.paper.Core;
-import me.aleiv.core.paper.utilities.JsonConfig;
+import me.aleiv.core.paper.utilities.utils.JsonConfig;
 import net.md_5.bungee.api.ChatColor;
 
 @Data

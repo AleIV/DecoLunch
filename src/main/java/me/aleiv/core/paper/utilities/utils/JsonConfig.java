@@ -1,4 +1,4 @@
-package me.aleiv.core.paper.utilities;
+package me.aleiv.core.paper.utilities.utils;
 
 import java.io.File;
 import java.io.FileWriter;
