@@ -92,7 +92,7 @@ public class DecoLunchManager {
 
         var stand = (ArmorStand) world.spawnEntity(location, EntityType.ARMOR_STAND);
 
-        stand.setRotation(player.getLocation().getYaw(), 0);
+        stand.setRotation(player.getLocation().getYaw()+180, 0);
         stand.setInvisible(true);
         stand.setGravity(false);
         stand.setInvulnerable(true);
