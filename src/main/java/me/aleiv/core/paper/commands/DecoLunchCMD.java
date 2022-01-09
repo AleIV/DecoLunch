@@ -13,6 +13,7 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Subcommand;
 import lombok.NonNull;
 import me.aleiv.core.paper.Core;
+import me.aleiv.core.paper.DecoLunchManager;
 import me.aleiv.core.paper.DecoLunchManager.Catalog;
 import me.aleiv.core.paper.DecoLunchManager.DecoTag;
 import me.aleiv.core.paper.DecoLunchManager.Rarity;
@@ -36,8 +37,7 @@ public class DecoLunchCMD extends BaseCommand {
     public void register(CommandSender sender, String name, int customModelData, Material material, Catalog catalog,
             Rarity rarity, DecoTag decoTag) {
 
-        var manager = instance.getDecoLunchManager();
-        var decoitems = manager.getDecoItems();
+        var decoitems = DecoLunchManager.decoItems;
 
         if (decoitems.containsKey(name)) {
             sender.sendMessage(ChatColor.of(errorColor) + "DecoItem " + name + " is already registered.");
@@ -61,8 +61,7 @@ public class DecoLunchCMD extends BaseCommand {
     @CommandCompletion("@decoitems")
     public void get(CommandSender sender, String name) {
 
-        var manager = instance.getDecoLunchManager();
-        var decoitems = manager.getDecoItems();
+        var decoitems = DecoLunchManager.decoItems;
 
         if (!decoitems.containsKey(name)) {
             sender.sendMessage(ChatColor.of(errorColor) + "DecoItem " + name + " is not registered.");

@@ -17,13 +17,27 @@ import us.jcedeno.libs.rapidinv.ItemBuilder;
 @Data
 public class DecoItem {
 
-    public static HashMap<Rarity, String> colorItem = new HashMap<Rarity, String>() {
+    public static HashMap<Rarity, String> colorRarity = new HashMap<Rarity, String>() {
         {
             put(Rarity.COMMON, "#6d777e");
             put(Rarity.UNCOMMON, "#81bc2f");
             put(Rarity.RARE, "#2fbc9d");
             put(Rarity.EPIC, "#bc2f3b");
             put(Rarity.LEGENDARY, "#eba400");
+            put(Rarity.ALL, "#9585db");
+        }
+    };
+
+    public static HashMap<Catalog, String> colorCatalog = new HashMap<Catalog, String>() {
+        {
+            put(Catalog.ALL, "#9585db");
+            put(Catalog.ADMIN, "#aa0e0e");
+            put(Catalog.DECORATION, "#f3936d");
+            put(Catalog.MODERN, "#a1f7ec");
+            put(Catalog.SEASONAL, "#f0dc47");
+            put(Catalog.RUSTIC, "#a7300c");
+            put(Catalog.SECURITY, "#7d9be8");
+
         }
     };
 
@@ -50,7 +64,7 @@ public class DecoItem {
 
     public ItemStack getItemStack() {
         return new ItemBuilder(material).meta(meta -> meta.setCustomModelData(customModelData))
-                .name(ChatColor.of(colorItem.get(rarity)) + name).build();
+                .name(ChatColor.of(colorRarity.get(rarity)) + name).build();
     }
 
 }

@@ -27,7 +27,7 @@ public class DecoLunchManager {
 
     Core instance;
 
-    HashMap<String, DecoItem> decoItems = new HashMap<>();
+    public static HashMap<String, DecoItem> decoItems = new HashMap<>();
     HashMap<String, GuiCode> guiCodes = new HashMap<>();
     HashMap<Catalog, Material> catalogMaterials = new HashMap<Catalog, Material>() {
         {
@@ -248,14 +248,14 @@ public class DecoLunchManager {
         });
 
         manager.getCommandCompletions().registerAsyncCompletion("decoitems", c -> {
-            return instance.getDecoLunchManager().getDecoItems().keySet().stream().toList();
+            return decoItems.keySet().stream().toList();
         });
     }
 
     // 18-53
 
     public enum Catalog {
-        ADMIN, RUSTIC, SECURITY, DECORATION, MODERN
+        ALL, ADMIN, RUSTIC, SECURITY, DECORATION, MODERN, SEASONAL
     }
 
     public enum DecoTag {
@@ -263,7 +263,7 @@ public class DecoLunchManager {
     }
 
     public enum Rarity {
-        COMMON, UNCOMMON, RARE, EPIC, LEGENDARY
+        ALL, COMMON, UNCOMMON, RARE, EPIC, LEGENDARY
     }
 
     public enum GuiCode {
