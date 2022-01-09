@@ -107,7 +107,13 @@ public class DecoItemsListener implements Listener {
             if (tags.contains(DecoTag.ENTITY)) {
 
                 manager.spawnDecoStand(loc, player, decoItem);
-                equipment.setItem(hand, null);
+                if(item.getAmount() == 1){
+                    equipment.setItem(hand, null);
+                }else{
+                    item.setAmount(item.getAmount()-1);
+                    equipment.setItem(hand, item);
+                }
+                
                 if (tags.contains(DecoTag.BARRIER)) {
                     loc.getBlock().setType(Material.BARRIER);
                 }
