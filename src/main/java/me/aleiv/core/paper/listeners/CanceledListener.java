@@ -1,5 +1,6 @@
 package me.aleiv.core.paper.listeners;
 
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
@@ -36,7 +37,7 @@ public class CanceledListener implements Listener{
         var manager = instance.getDecoLunchManager();
 
         for (var item : table) {
-            if(item != null && item.hasItemMeta() && manager.isDecoItem(item)){
+            if(item != null && item.getType() != Material.NOTE_BLOCK && item.hasItemMeta() && manager.isDecoItem(item) && !manager.isDecoHammer(item)){
                 e.getInventory().setResult(null);
                 return;
             }

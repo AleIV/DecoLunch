@@ -8,13 +8,17 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
+import me.aleiv.core.paper.Core;
 import me.aleiv.core.paper.DecoLunchManager;
 import me.aleiv.core.paper.DecoLunchManager.Catalog;
 import me.aleiv.core.paper.DecoLunchManager.Rarity;
 import me.aleiv.core.paper.objects.DecoItem;
+import me.aleiv.core.paper.objects.DecoPrize;
 import me.aleiv.core.paper.utilities.utils.NegativeSpaces;
 import net.md_5.bungee.api.ChatColor;
 import us.jcedeno.libs.rapidinv.ItemBuilder;
@@ -28,8 +32,6 @@ public class DecoLunchTableGUI extends DecoGUIBase {
         update();
 
     }
-
-    // TODO: CRAFTEOS, COSTOS,
 
     Rarity rarity = Rarity.ALL;
     Catalog catalog = Catalog.ALL;
@@ -48,18 +50,55 @@ public class DecoLunchTableGUI extends DecoGUIBase {
         refreshPage();
     }
 
+    public boolean containsDecoPrize(DecoPrize decoPrize, PlayerInventory inv){
+        var contains = true;
+        try {
+            for (var item : decoPrize.getPrize().entrySet()) {
+                var i = new ItemBuilder(item.getKey()).amount(item.getValue()).build();
+                if(!inv.containsAtLeast(i, item.getValue())){
+                    contains = false;
+                }
+            }   
+        } catch (Exception e) {
+            return false;
+        }
+        return contains;
+    }
+
+    public void removeDecoPrize(DecoPrize decoPrize, PlayerInventory inv){
+        for (var item : decoPrize.getPrize().entrySet()) {
+            var i = new ItemBuilder(item.getKey()).amount(item.getValue()).build();
+            inv.removeItem(i);
+        }
+    }
+
     public void refreshPage() {
         if (pages.isEmpty()) {
             for (int i = 0; i < 45; i++) {
                 this.removeItem(i);
             }
         } else {
+            var manager = Core.getInstance().getDecoLunchManager();
+            
             var p = pages.get(page);
             var size = p.size();
             for (int i = 0; i < 45; i++) {
                 if (i < size) {
-                    this.setItem(i, p.get(i), handler -> {
+                    var item = p.get(i);
+                    var decoItem = manager.getDecoItem(item);
+                    var decoPrize = decoItem.getPrize();
+                    this.setItem(i, item, handler -> {
+                        var player = (Player) handler.getWhoClicked();
+                        var inv = player.getInventory();
+                        
+                        if(containsDecoPrize(decoPrize, inv)){
+                            removeDecoPrize(decoPrize, inv);
+                            inv.addItem(item);
 
+
+                        }else{
+                            player.sendMessage(ChatColor.of("#d3274f") + "You don't have the needed materials for this.");
+                        }
                     });
                 } else {
                     this.removeItem(i);

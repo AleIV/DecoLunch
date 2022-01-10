@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import lombok.Data;
@@ -48,11 +49,10 @@ public class DecoItem {
     Catalog catalog;
     Rarity rarity;
     List<DecoTag> decoTags = new ArrayList<>();
-
-    // TODO: prizes materials to craft
+    String prize;
 
     public DecoItem(String name, int customModelData, String blockID, Material material, Catalog catalog, Rarity rarity,
-            List<DecoTag> decoTags) {
+            List<DecoTag> decoTags, String prize) {
         this.name = name;
         this.customModelData = customModelData;
         this.blockID = blockID;
@@ -60,11 +60,63 @@ public class DecoItem {
         this.catalog = catalog;
         this.rarity = rarity;
         this.decoTags = decoTags;
+        this.prize = prize;
+    }
+
+    public DecoPrize getPrize() {
+        try {
+            var split = prize.split(";");
+            HashMap<Material, Integer> map = new HashMap<>();
+            for (String string : split) {
+                var mp = string.split("-");
+                var material = Material.valueOf(mp[0]);
+                var value = Integer.parseInt(mp[1]);
+                map.put(material, value);
+            }
+
+            return new DecoPrize(map);
+
+        } catch (Exception e) {
+
+        }
+
+        return null;
+
     }
 
     public ItemStack getItemStack() {
+        List<String> lines = new ArrayList<>();
+        var decoPrize = getPrize();
+        if(decoPrize != null){
+            lines.add(ChatColor.of("#bb636c") + "Price: ");
+            for (var entry : decoPrize.getPrize().entrySet()) {
+    
+                lines.add(ChatColor.of("#dcb841") + "- " + formatName(entry.getKey().toString()) + ": " + entry.getValue());
+            }
+        }
+
         return new ItemBuilder(material).meta(meta -> meta.setCustomModelData(customModelData))
-                .name(ChatColor.of(colorRarity.get(rarity)) + name).build();
+                .name(ChatColor.of(colorRarity.get(rarity)) + name).addLore(lines).flags(ItemFlag.HIDE_ATTRIBUTES).build();
+    }
+
+    public String formatName(String string) {
+        var str = string.toLowerCase();
+        var array = str.toCharArray();
+
+        var upper = true;
+        var count = 0;
+        for (char c : array) {
+            if (upper) {
+                array[count] = Character.toUpperCase(c);
+                upper = false;
+            } else if (c == '_') {
+                upper = true;
+            }
+            count++;
+        }
+
+        var newString = String.valueOf(array);
+        return newString.replace("_", " ");
     }
 
 }

@@ -8,35 +8,31 @@ import com.google.common.collect.ImmutableList;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ArmorStand.LockType;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import lombok.Data;
 import me.aleiv.core.paper.gui.DecoLunchTableGUI;
+import me.aleiv.core.paper.objects.CustomRecipe;
 import me.aleiv.core.paper.objects.DecoItem;
 import us.jcedeno.libs.rapidinv.RapidInv;
 
 @Data
-public class DecoLunchManager {
+public class DecoLunchManager{
 
     Core instance;
 
     public static HashMap<String, DecoItem> decoItems = new HashMap<>();
     HashMap<String, GuiCode> guiCodes = new HashMap<>();
-    HashMap<Catalog, Material> catalogMaterials = new HashMap<Catalog, Material>() {
-        {
-            put(Catalog.DECORATION, Material.PAPER);
-            put(Catalog.MODERN, Material.CLAY_BALL);
-            put(Catalog.RUSTIC, Material.BRICK);
-            put(Catalog.SECURITY, Material.IRON_INGOT);
-        }
-    };
+    HashMap<String, CustomRecipe> allRecipes = new HashMap<>();
 
     public DecoLunchManager(Core instance) {
         this.instance = instance;
@@ -52,18 +48,39 @@ public class DecoLunchManager {
 
             // NAME | CUSTOM MODEL DATA | BLOCKID | MATERIAL | CATALOG | RARITY | DECOTAGS
 
-            put("Iron DecoHammer", 1, "", Material.IRON_PICKAXE, Catalog.ADMIN, Rarity.COMMON,
-                    List.of(DecoTag.CRAFT, DecoTag.ITEM));
-            put("Diamond DecoHammer", 1, "", Material.DIAMOND_PICKAXE, Catalog.ADMIN, Rarity.UNCOMMON,
-                    List.of(DecoTag.CRAFT, DecoTag.ITEM));
-            put("Netherite DecoHammer", 1, "", Material.NETHERITE_PICKAXE, Catalog.ADMIN, Rarity.RARE,
-                    List.of(DecoTag.CRAFT, DecoTag.ITEM));
+            var iron = "Iron DecoHammer";
+            var diamond = "Diamond DecoHammer";
+            var netherite = "Netherite DecoHammer";
+
+            put(iron, 10001, "", Material.IRON_PICKAXE, Catalog.ADMIN, Rarity.COMMON,
+                    List.of(DecoTag.CRAFT, DecoTag.ITEM), "");
+            put(diamond, 10002, "", Material.DIAMOND_PICKAXE, Catalog.ADMIN, Rarity.UNCOMMON,
+                    List.of(DecoTag.CRAFT, DecoTag.ITEM), "");
+            put(netherite, 10003, "", Material.NETHERITE_PICKAXE, Catalog.ADMIN, Rarity.RARE,
+                    List.of(DecoTag.CRAFT, DecoTag.ITEM), "");
+                    
+            var ironDecoItem = getDecoItem(iron);
+            var ironRecipe = getHammerRecipe(new NamespacedKey(instance, "ironhammer"), ironDecoItem.getItemStack(), Material.IRON_INGOT, Material.STICK);
+            instance.getServer().addRecipe(ironRecipe);
+
+            var diamondDecoItem = getDecoItem(diamond);
+            var diamondRecipe = getHammerRecipe(new NamespacedKey(instance, "diamondhammer"), diamondDecoItem.getItemStack(), Material.DIAMOND, Material.STICK);
+            instance.getServer().addRecipe(diamondRecipe);
+            
+            var netheriteDecoItem = getDecoItem(netherite);
+            var netheriteRecipe = getHammerRecipe(new NamespacedKey(instance, "netheritehammer"), netheriteDecoItem.getItemStack(), Material.NETHERITE_INGOT, Material.STICK);
+            instance.getServer().addRecipe(netheriteRecipe);
 
             var blockID = tool.getBlockIDbyData("harp", 1, false);
-            put("DecoLunch Table", 1, blockID, Material.NOTE_BLOCK, Catalog.ADMIN, Rarity.COMMON,
-                    List.of(DecoTag.BLOCK, DecoTag.CRAFT));
+            var decoLunch = "DecoLunch Table"; 
+            put(decoLunch, 10000, blockID, Material.NOTE_BLOCK, Catalog.ADMIN, Rarity.COMMON,
+                    List.of(DecoTag.BLOCK, DecoTag.CRAFT), "");
             guiCodes.put(blockID, GuiCode.DECOLUNCH);
 
+            var decoLunchDecoItem = getDecoItem(decoLunch);
+
+            var decoRecipe = getDecoLunchRecipe(new NamespacedKey(instance, "decolunchtable"), decoLunchDecoItem.getItemStack());
+            instance.getServer().addRecipe(decoRecipe);
             // NAME | CUSTOM MODEL DATA | BLOCKID | CATALOG | RARITY | DECOTAGS
 
             initDecoItems();
@@ -75,15 +92,43 @@ public class DecoLunchManager {
 
     }
 
+    private ShapedRecipe getDecoLunchRecipe(NamespacedKey namespacedKey, ItemStack result) {
+        ShapedRecipe shapedRecipe = new ShapedRecipe(namespacedKey, result);
+
+        shapedRecipe.shape("AAA", "BCD", "EEE");
+
+        shapedRecipe.setIngredient('A', Material.PAPER);
+
+        shapedRecipe.setIngredient('B', Material.IRON_PICKAXE);
+        shapedRecipe.setIngredient('C', Material.CRAFTING_TABLE);
+        shapedRecipe.setIngredient('D', Material.IRON_AXE);
+
+        shapedRecipe.setIngredient('E', Material.IRON_BLOCK);
+
+        return shapedRecipe;
+    }
+
+    private ShapedRecipe getHammerRecipe(NamespacedKey namespacedKey, ItemStack result, Material ingredient, Material ingredient2) {
+        ShapedRecipe shapedRecipe = new ShapedRecipe(namespacedKey, result);
+
+        shapedRecipe.shape("AAA", "AB ", " B ");
+
+        shapedRecipe.setIngredient('A', ingredient);
+
+        shapedRecipe.setIngredient('B', ingredient2);
+
+        return shapedRecipe;
+    }
+
     private void put(String name, int customModelData, String blockID, Material material, Catalog catalog,
-            Rarity rarity, List<DecoTag> decoTags) {
-        decoItems.put(name, new DecoItem(name, customModelData, blockID, material, catalog, rarity, decoTags));
+            Rarity rarity, List<DecoTag> decoTags, String prizeString) {
+        decoItems.put(name, new DecoItem(name, customModelData, blockID, material, catalog, rarity, decoTags, prizeString));
     }
 
     private void put(String name, int customModelData, String blockID, Catalog catalog, Rarity rarity,
-            List<DecoTag> decoTags) {
+            List<DecoTag> decoTags, String prizeString) {
         decoItems.put(name,
-                new DecoItem(name, customModelData, blockID, catalogMaterials.get(catalog), catalog, rarity, decoTags));
+                new DecoItem(name, customModelData, blockID, Material.RABBIT_HIDE, catalog, rarity, decoTags, prizeString));
     }
 
     public void spawnDecoStand(Location loc, Player player, DecoItem decoItem) {
@@ -125,9 +170,9 @@ public class DecoLunchManager {
         if (!item.hasItemMeta())
             return false;
         var meta = item.getItemMeta();
-        if (meta.hasDisplayName()) {
-            var name = meta.getDisplayName();
-            return !decoItems.values().stream().filter(deco -> name.contains(deco.getName())).toList().isEmpty();
+        if ((meta.hasCustomModelData() && (item.getType() == Material.RABBIT_HIDE || item.getType() == Material.NOTE_BLOCK)) || isDecoHammer(item)) {
+            var data = meta.getCustomModelData();
+            return !decoItems.values().stream().filter(deco -> deco.getCustomModelData() == data).toList().isEmpty();
         }
         return false;
     }
@@ -135,8 +180,8 @@ public class DecoLunchManager {
     public DecoItem getDecoItem(ItemStack item) {
         var meta = item.getItemMeta();
         if (isDecoItem(item)) {
-            var name = meta.getDisplayName();
-            return decoItems.values().stream().filter(deco -> name.contains(deco.getName())).findAny().orElse(null);
+            var data = meta.getCustomModelData();
+            return decoItems.values().stream().filter(deco -> deco.getCustomModelData() == data).findAny().orElse(null);
         }
         return null;
     }
@@ -172,9 +217,10 @@ public class DecoLunchManager {
     public boolean isDecoHammer(ItemStack item) {
         var type = item.getType();
         var meta = item.getItemMeta();
+        var data = List.of(10001, 10002, 10003);
         return (type == Material.IRON_PICKAXE || type == Material.DIAMOND_PICKAXE || type == Material.NETHERITE_PICKAXE)
                 && meta.hasCustomModelData()
-                && meta.getCustomModelData() == 1;
+                && data.contains(meta.getCustomModelData());
     }
 
     public void damageHammer(ItemStack hammer) {
@@ -273,85 +319,85 @@ public class DecoLunchManager {
     private void initDecoItems() {
         //RUSTIC
 
-        put("Oak Chair", 1, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Spruce Chair", 2, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Birch Chair", 3, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Jungle Chair", 4, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Acacia Chair", 5, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Dark Oak Chair", 6, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
+        put("Oak Chair", 1, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "OAK_LOG-5");
+        put("Spruce Chair", 2, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "SPRUCE_LOG-5");
+        put("Birch Chair", 3, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "BIRCH_LOG-5");
+        put("Jungle Chair", 4, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "JUNGLE_LOG-5");
+        put("Acacia Chair", 5, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "ACACIA_LOG-5");
+        put("Dark Oak Chair", 6, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "DARK_OAK_LOG-5");
 
-        put("Oak Bench", 7, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Spruce Bench", 8, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Birch Bench", 9, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Jungle Bench", 10, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Acacia Bench", 11, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Dark Oak Bench", 12, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
+        put("Oak Bench", 7, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "OAK_LOG-3");
+        put("Spruce Bench", 8, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "SPRUCE_LOG-3");
+        put("Birch Bench", 9, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "BIRCH_LOG-3");
+        put("Jungle Bench", 10, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "JUNGLE_LOG-3");
+        put("Acacia Bench", 11, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "ACACIA_LOG-3");
+        put("Dark Oak Bench", 12, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "DARK_OAK_LOG-3");
 
         /*
         NOT USED TWO BLOCKS TABLE
-        put("Oak Console Table", 13, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Spruce Console Table", 14, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Birch Console Table", 15, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Jungle Console Table", 16, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Acacia Console Table", 17, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Dark Oak Console Table", 18, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY));*/
+        put("Oak Console Table", 13, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY), "OAK_LOG-6");
+        put("Spruce Console Table", 14, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY), "SPRUCE_LOG-6");
+        put("Birch Console Table", 15, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY), "BIRCH_LOG-6");
+        put("Jungle Console Table", 16, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY), "JUNGLE_LOG-6");
+        put("Acacia Console Table", 17, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY), "ACACIA_LOG-6");
+        put("Dark Oak Console Table", 18, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY), "DARK_OAK_LOG-6");*/
 
-        put("Oak Table", 19, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW));
-        put("Spruce Table", 20, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW));
-        put("Birch Table", 21, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW));
-        put("Jungle Table", 22, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW));
-        put("Acacia Table", 23, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW));
-        put("Dark Oak Table", 24, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW));
+        put("Oak Table", 19, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW), "OAK_LOG-5");
+        put("Spruce Table", 20, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW), "SPRUCE_LOG-5");
+        put("Birch Table", 21, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW), "BIRCH_LOG-5");
+        put("Jungle Table", 22, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW), "JUNGLE_LOG-5");
+        put("Acacia Table", 23, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW), "ACACIA_LOG-5");
+        put("Dark Oak Table", 24, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER, DecoTag.SMOOTH_YAW), "DARK_OAK_LOG-5");
 
-        put("Oak Mini Table", 25, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
-        put("Spruce Mini Table", 26, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
-        put("Birch Mini Table", 27, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
-        put("Jungle Mini Table", 28, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
-        put("Acacia Mini Table", 29, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
-        put("Dark Oak Mini Table", 30, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
+        put("Oak Mini Table", 25, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "OAK_LOG-4");
+        put("Spruce Mini Table", 26, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "SPRUCE_LOG-4");
+        put("Birch Mini Table", 27, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "BIRCH_LOG-4");
+        put("Jungle Mini Table", 28, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "JUNGLE_LOG-4");
+        put("Acacia Mini Table", 29, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "ACACIA_LOG-4");
+        put("Dark Oak Mini Table", 30, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "DARK_OAK_LOG-4");
 
-        put("Oak Dresser", 31, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
-        put("Spruce Dresser", 32, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
-        put("Birch Dresser", 33, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
-        put("Jungle Dresser", 34, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
-        put("Acacia Dresser", 35, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
-        put("Dark Oak Dresser", 36, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER));
+        put("Oak Dresser", 31, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "OAK_LOG-5;IRON_NUGGET-2");
+        put("Spruce Dresser", 32, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "SPRUCE_LOG-5;IRON_NUGGET-2");
+        put("Birch Dresser", 33, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "BIRCH_LOG-5;IRON_NUGGET-2");
+        put("Jungle Dresser", 34, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "JUNGLE_LOG-5;IRON_NUGGET-2");
+        put("Acacia Dresser", 35, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "ACACIA_LOG-5;IRON_NUGGET-2");
+        put("Dark Oak Dresser", 36, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "DARK_OAK_LOG-5;IRON_NUGGET-2");
 
-        put("Oak Armchair", 37, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Spruce Armchair", 38, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Birch Armchair", 39, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Jungle Armchair", 40, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Acacia Armchair", 41, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
-        put("Dark Oak Armchair", 42, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT));
+        put("Oak Armchair", 37, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "OAK_LOG-5;WHITE_WOOL-3");
+        put("Spruce Armchair", 38, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "SPRUCE_LOG-5;WHITE_WOOL-3");
+        put("Birch Armchair", 39, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "BIRCH_LOG-5;WHITE_WOOL-3");
+        put("Jungle Armchair", 40, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "JUNGLE_LOG-5;WHITE_WOOL-3");
+        put("Acacia Armchair", 41, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "ACACIA_LOG-5;WHITE_WOOL-3");
+        put("Dark Oak Armchair", 42, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.SIT), "DARK_OAK_LOG-5;WHITE_WOOL-3");
 
-        put("Oak Chandelier", 43, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
-        put("Spruce Chandelier", 44, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
-        put("Birch Chandelier", 45, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
-        put("Jungle Chandelier", 46, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
-        put("Acacia Chandelier", 47, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
-        put("Dark Oak Chandelier", 48, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT));
+        put("Oak Chandelier", 43, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT), "OAK_LOG-5;CHAIN-2;TORCH-4");
+        put("Spruce Chandelier", 44, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT), "SPRUCE_LOG-5;CHAIN-2;TORCH-4");
+        put("Birch Chandelier", 45, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT), "BIRCH_LOG-5;CHAIN-2;TORCH-4");
+        put("Jungle Chandelier", 46, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT) , "JUNGLE_LOG-5;CHAIN-2;TORCH-4");
+        put("Acacia Chandelier", 47, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT), "ACACIA_LOG-5;CHAIN-2;TORCH-4");
+        put("Dark Oak Chandelier", 48, "", Catalog.RUSTIC, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.LIGHT), "DARK_OAK_LOG-5;CHAIN-2;TORCH-4");
 
         //DECORATION
 
-        put("Wooden Logs", 1, "", Catalog.DECORATION, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Stacked Books", 2, "", Catalog.DECORATION, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Mini Lunch", 3, "", Catalog.DECORATION, Rarity.EPIC, List.of(DecoTag.ENTITY));
-        put("Curtain Closed", 4, "", Catalog.DECORATION, Rarity.UNCOMMON, List.of(DecoTag.ENTITY));
-        put("Curtain Open", 5, "", Catalog.DECORATION, Rarity.UNCOMMON, List.of(DecoTag.ENTITY));
-        put("BieberIV Poster", 6, "", Catalog.DECORATION, Rarity.RARE, List.of(DecoTag.ENTITY));
-        put("Astronaut", 7, "", Catalog.DECORATION, Rarity.RARE, List.of(DecoTag.ENTITY));
-        put("Nimu Puff", 8, "", Catalog.DECORATION, Rarity.RARE, List.of(DecoTag.ENTITY));
-        put("Corkboard", 9, "", Catalog.DECORATION, Rarity.UNCOMMON, List.of(DecoTag.ENTITY));
-        put("Mictia Planet", 10, "", Catalog.DECORATION, Rarity.RARE, List.of(DecoTag.ENTITY));
-        put("Laptop", 11, "", Catalog.DECORATION, Rarity.UNCOMMON, List.of(DecoTag.ENTITY));
-        put("LunchBox", 12, "", Catalog.DECORATION, Rarity.LEGENDARY, List.of(DecoTag.ENTITY));
-        put("Bingo Space Painting", 13, "", Catalog.DECORATION, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("DEDSAFIO Painting", 14, "", Catalog.DECORATION, Rarity.COMMON, List.of(DecoTag.ENTITY));
-        put("Rodolfo", 15, "", Catalog.DECORATION, Rarity.EPIC, List.of(DecoTag.ENTITY));
+        put("Wooden Logs", 1001, "", Catalog.DECORATION, Rarity.COMMON, List.of(DecoTag.ENTITY), "SPRUCE_LOG-5");
+        put("Stacked Books", 1002, "", Catalog.DECORATION, Rarity.COMMON, List.of(DecoTag.ENTITY), "BOOK-2");
+        put("Mini Lunch", 1003, "", Catalog.DECORATION, Rarity.EPIC, List.of(DecoTag.ENTITY), "BROWN_WOOL-5");
+        put("Curtain Closed", 1004, "", Catalog.DECORATION, Rarity.UNCOMMON, List.of(DecoTag.ENTITY), "YELLOW_WOOL-6;OAK_LOG-3");
+        put("Curtain Open", 1005, "", Catalog.DECORATION, Rarity.UNCOMMON, List.of(DecoTag.ENTITY), "YELLOW_WOOL-6;OAK_LOG-3");
+        put("BieberIV Poster", 1006, "", Catalog.DECORATION, Rarity.RARE, List.of(DecoTag.ENTITY), "PAINTING-1;YELLOW_DYE-3;CYAN_DYE-2;ORANGE_DYE-2");
+        put("Astronaut", 1007, "", Catalog.DECORATION, Rarity.RARE, List.of(DecoTag.ENTITY), "WHITE_TERRACOTTA-2;GLASS-2;BLACK_DYE-2");
+        put("Nimu Puff", 1008, "", Catalog.DECORATION, Rarity.RARE, List.of(DecoTag.ENTITY), "PINK_WOOL-6");
+        put("Corkboard", 1009, "", Catalog.DECORATION, Rarity.UNCOMMON, List.of(DecoTag.ENTITY), "OAK_LOG-3;SPONGE-2");
+        put("Mictia Planet", 1010, "", Catalog.DECORATION, Rarity.RARE, List.of(DecoTag.ENTITY), "PURPLE_WOOL-6");
+        put("Laptop", 1011, "", Catalog.DECORATION, Rarity.UNCOMMON, List.of(DecoTag.ENTITY), "IRON_INGOT-5;BLACK_STAINED_GLASS_PANE-3;REDSTONE-2");
+        put("LunchBox", 1012, "", Catalog.DECORATION, Rarity.LEGENDARY, List.of(DecoTag.ENTITY), "IRON_INGOT-4;YELLOW_DYE-3");
+        put("Bingo Space Painting", 1013, "", Catalog.DECORATION, Rarity.COMMON, List.of(DecoTag.ENTITY), "PAINTING-1;BLACK_DYE-4;BLUE_DYE-2");
+        put("DEDSAFIO Painting", 1014, "", Catalog.DECORATION, Rarity.COMMON, List.of(DecoTag.ENTITY), "PAINTING-1;GREEN_DYE-4;YELLOW_DYE-2");
+        put("Rodolfo", 1015, "", Catalog.DECORATION, Rarity.EPIC, List.of(DecoTag.ENTITY), "RED_WOOL-5;LIGHT_BLUE_WOOL-3;OAK_LOG-3");
 
         //MODERN
-        put("Blinds", 1, "", Catalog.MODERN, Rarity.UNCOMMON, List.of(DecoTag.ENTITY));
-        put("Tall lamp", 2, "", Catalog.MODERN, Rarity.UNCOMMON, List.of(DecoTag.ENTITY));
+        put("Blinds", 2001, "", Catalog.MODERN, Rarity.UNCOMMON, List.of(DecoTag.ENTITY), "PAPER-5");
+        put("Tall lamp", 2002, "", Catalog.MODERN, Rarity.UNCOMMON, List.of(DecoTag.ENTITY), "IRON_INGOT-3;REDSTONE-2" );
 
 
     }

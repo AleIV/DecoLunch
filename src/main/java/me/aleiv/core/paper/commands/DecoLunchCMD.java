@@ -35,7 +35,7 @@ public class DecoLunchCMD extends BaseCommand {
 
     @Subcommand("register")
     public void register(CommandSender sender, String name, int customModelData, Material material, Catalog catalog,
-            Rarity rarity, DecoTag decoTag) {
+            Rarity rarity, DecoTag decoTag, String prize) {
 
         var decoitems = DecoLunchManager.decoItems;
 
@@ -43,7 +43,7 @@ public class DecoLunchCMD extends BaseCommand {
             sender.sendMessage(ChatColor.of(errorColor) + "DecoItem " + name + " is already registered.");
 
         } else {
-            var decoitem = new DecoItem(name, customModelData, "", material, catalog, rarity, List.of(decoTag));
+            var decoitem = new DecoItem(name, customModelData, "", material, catalog, rarity, List.of(decoTag), prize);
 
             var player = (Player) sender;
             player.getInventory().addItem(decoitem.getItemStack());

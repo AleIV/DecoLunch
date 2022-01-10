@@ -12,5 +12,5 @@ public class GlobalListener implements Listener{
         this.instance = instance;
     }
 
-    //TODO: drop on close
+
 }
