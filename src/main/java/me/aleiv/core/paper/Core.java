@@ -22,6 +22,7 @@ import me.aleiv.core.paper.utilities.NoteBlockTool.NoteBlockTool;
 import me.aleiv.core.paper.utilities.TCT.BukkitTCT;
 import me.aleiv.core.paper.utilities.utils.JsonConfig;
 import me.aleiv.core.paper.utilities.utils.NegativeSpaces;
+import me.aleiv.core.paper.utilities.utils.ResourcePackManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import us.jcedeno.libs.rapidinv.RapidInvManager;
@@ -35,6 +36,7 @@ public class Core extends JavaPlugin {
     private @Getter Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private @Getter DecoLunchManager decoLunchManager;
     private @Getter NoteBlockTool noteBlockTool;
+    private @Getter ResourcePackManager resourcePackManager;
     private @Getter ProtocolManager protocolManager;
 
     @Override
@@ -63,6 +65,10 @@ public class Core extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new SpecialDecoItemsListener(this), this);
         Bukkit.getPluginManager().registerEvents(new CanceledListener(this), this);
         Bukkit.getPluginManager().registerEvents(new GlobalListener(this), this);
+
+        resourcePackManager = new ResourcePackManager(this);
+        resourcePackManager.setResoucePackURL("https://download.mc-packs.net/pack/f768106114052c8bcf7e1c2303d0aa24de7afe8c.zip");
+        resourcePackManager.setResourcePackHash("f768106114052c8bcf7e1c2303d0aa24de7afe8c");
 
     }
 
