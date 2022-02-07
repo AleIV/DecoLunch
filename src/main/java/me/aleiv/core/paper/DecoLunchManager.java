@@ -394,10 +394,14 @@ public class DecoLunchManager{
         put("Bingo Space Painting", 1013, "", Catalog.DECORATION, Rarity.COMMON, List.of(DecoTag.ENTITY), "PAINTING-1;BLACK_DYE-4;BLUE_DYE-2");
         put("DEDSAFIO Painting", 1014, "", Catalog.DECORATION, Rarity.COMMON, List.of(DecoTag.ENTITY), "PAINTING-1;GREEN_DYE-4;YELLOW_DYE-2");
         put("Rodolfo", 1015, "", Catalog.DECORATION, Rarity.EPIC, List.of(DecoTag.ENTITY), "RED_WOOL-5;LIGHT_BLUE_WOOL-3;OAK_LOG-3");
+        put("Golden Trophy", 1016, "", Catalog.DECORATION, Rarity.RARE, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "GOLD_INGOT-9");
+        put("Silver Trophy", 1017, "", Catalog.DECORATION, Rarity.UNCOMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "IRON_INGOT-9");
+        put("Bronze Trophy", 1018, "", Catalog.DECORATION, Rarity.COMMON, List.of(DecoTag.ENTITY, DecoTag.BARRIER), "IRON_INGOT-9");
 
         //MODERN
         put("Blinds", 2001, "", Catalog.MODERN, Rarity.UNCOMMON, List.of(DecoTag.ENTITY), "PAPER-5");
         put("Tall lamp", 2002, "", Catalog.MODERN, Rarity.UNCOMMON, List.of(DecoTag.ENTITY), "IRON_INGOT-3;REDSTONE-2" );
+
 
 
     }

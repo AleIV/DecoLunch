@@ -67,8 +67,8 @@ public class Core extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new GlobalListener(this), this);
 
         resourcePackManager = new ResourcePackManager(this);
-        resourcePackManager.setResoucePackURL("https://download.mc-packs.net/pack/f768106114052c8bcf7e1c2303d0aa24de7afe8c.zip");
-        resourcePackManager.setResourcePackHash("f768106114052c8bcf7e1c2303d0aa24de7afe8c");
+        resourcePackManager.setResoucePackURL("https://download.mc-packs.net/pack/ba402fcbdb1d12512208ac06dd8a537afb3b82a2.zip");
+        resourcePackManager.setResourcePackHash("ba402fcbdb1d12512208ac06dd8a537afb3b82a2");
 
     }
 
